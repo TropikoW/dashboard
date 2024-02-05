@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    user : {
+                        username : '',
+                        userpassword : '',
+                        log : false
+                    }
+                }
+            },
+            template : `
+            <login v-if="!user.log"/>
+            <loggeout v-if="user.log"/>
+            `
+        })
+        app.component("v-login",{
+            
+        })
+        app.component("v-loggeout",{
+
+        })
+        app.component("v-button",{
+
+        })
+        const vm = app.mount('#app');
+    </script>
+</body>
+</html>

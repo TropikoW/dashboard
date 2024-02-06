@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Registration</title>
 </head>
 <body>
     <div id="app"></div>
@@ -15,85 +15,142 @@
                     user : {
                         username : '',
                         userpassword : '',
-                        log : false
+                        userstatus : false
                     }
                 }
             },
-            methods : {
-            },
-            provide : {
-                statusLog : false
-            },
-            template : `
-            <v-login v-model:listeningusername="user.username" v-model:listeninguserpassword="user.userpassword" :listeningstatus="user.log" v-if="!user.log"/>
-            <v-loggeout v-model:listeningstatus="user.log" v-if="user.log"/>
-            <p>{{user.username}}</p>
-            `            
-        })
-        app.component("v-login",{
-            data() {
-                return {
-                    status : this.listeningstatus
+            computed : {
+                handlebackground() {
+                    return this.user.userstatus ? ['bg-login'] : ['bg-logout']
                 }
             },
+            template : `
+                <div class="container" :class="handlebackground">
+                    <div class="container-form">
+                        <v-login v-model:listeningusername="user.username" v-model:listeninguserpassword="user.userpassword" v-if="!user.userstatus"/>
+                    </div>
+                    <div class="container-logout">
+                        <v-logout v-if="user.userstatus" :username="user.username"/>
+                    </div>
+                    <div class="container-btn">
+                        <v-button :inputusername="user.username" :inputuserpassword="user.userpassword" v-model:handlestatus="user.userstatus"/>    
+                    </div>
+                </div>
+            `
+        })
+        app.component("v-login",{
             methods : {
-                inputusername(e) {
+                handlename(e) {
                     this.$emit("update:listeningusername",e.target.value)
                 },
-                inputuserpassword(e) {
+                handlepassword(e) {
                     this.$emit("update:listeninguserpassword",e.target.value)
-                },
-                toggleStatus()  {
-
                 }
             },
             props : {
-                'listeningusername' : String,
-                'listeninguserpassword' : String,
-                'listeningstatus' : Boolean
+                listeningusername : String,
+                listeninguserpassword : String
             },
             template : `
                 <form class="container-form">
-                    <label>Name</label>
-                    <input type="text" :listeningusername="listeningusername" @input="inputusername"/>
-                    <label>Password</label>
-                    <input type="password" :listeninguserpassword="listeninguserpassword" @input="inputuserpassword"/>
-                    <v-button v-if="!listeningstatus"/>
+                    <label>Please fill the inputs and create a password</label>
+                    <input type="text" @input="handlename"/>
+                    <input type="password" @input="handlepassword">
                 </form>
             `
         })
-        app.component("v-loggeout",{
+        app.component("v-logout",{
             props : {
-                listeningstatus : Boolean
-            }
+                username : String
+            },
+            template : `
+                <p>Hola {{username}}</p>
+            `
         })
         app.component("v-button",{
-            data() {
-                return {
-                }
-            },
             methods : {
-                togglestatus(e) {
-                    console.log('escuchando')
-                    e.preventDefault();
+                validateInput() {
+                    if(this.inputusername.trim() !== '' && this.inputuserpassword.trim() !== '') {
+                        this.$emit("update:handlestatus",!this.handlestatus)
+                    } else {
+                        alert("You mout enter your name and your password")
+                    }
                 }
             },
             computed : {
-                handleButton() {
-                    return this.statusLog ? 'Logout' : 'Login'
+                handleText() {
+                    return this.handlestatus ? 'Logout' : 'Sign Up'
+                },
+                handlebgbtn() {
+                    return this.handlestatus ? ['bg-logout'] : ['bg-login']
                 }
             },
-            inject : ["statusLog"],
+            props : {
+                inputusername : String,
+                inputuserpassword : String,
+                handlestatus : Boolean
+            },
             template : `
-                <button @click="togglestatus">{{handleButton}}</button>
+                <button @click="validateInput" :class="handlebgbtn">{{handleText}}</button>
             `
         })
-        const vm = app.mount('#app');
+        const vm = app.mount('#app')
     </script>
     <style>
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            pad: 0;
+        }
+        .container{
+            width: 100%;
+            height: 100vh;
+        }
         .container-form{
             display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 110px;
+        }
+        .container-form:nth-child(1){
+            font-size: 30px;
+        }
+        .container-logout{
+            text-align: center;
+        }
+        .container-logout>p{
+            font-size: 30px;
+        }
+        .container-btn{
+            margin-top: 30px;
+            position: absolute;
+            right: 45%;
+        }
+        .bg-logout{
+            background-color: #f57b65;
+        }
+        .bg-login{
+            background-color: #02df8a;
+        }
+        form{
+            display: flex;
             flex-direction: column;
+        }
+        input{
+            width: 600px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 20px;
+            font-weight: 700;
+        }
+        button {
+            padding:15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
         }
     </style>
 </body>

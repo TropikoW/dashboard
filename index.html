@@ -19,23 +19,82 @@
                     }
                 }
             },
+            methods : {
+            },
+            provide : {
+                statusLog : false
+            },
             template : `
-            <login v-if="!user.log"/>
-            <loggeout v-if="user.log"/>
-            `
+            <v-login v-model:listeningusername="user.username" v-model:listeninguserpassword="user.userpassword" :listeningstatus="user.log" v-if="!user.log"/>
+            <v-loggeout v-model:listeningstatus="user.log" v-if="user.log"/>
+            <p>{{user.username}}</p>
+            `            
         })
         app.component("v-login",{
-            
+            data() {
+                return {
+                    status : this.listeningstatus
+                }
+            },
+            methods : {
+                inputusername(e) {
+                    this.$emit("update:listeningusername",e.target.value)
+                },
+                inputuserpassword(e) {
+                    this.$emit("update:listeninguserpassword",e.target.value)
+                },
+                toggleStatus()  {
+
+                }
+            },
+            props : {
+                'listeningusername' : String,
+                'listeninguserpassword' : String,
+                'listeningstatus' : Boolean
+            },
+            template : `
+                <form class="container-form">
+                    <label>Name</label>
+                    <input type="text" :listeningusername="listeningusername" @input="inputusername"/>
+                    <label>Password</label>
+                    <input type="password" :listeninguserpassword="listeninguserpassword" @input="inputuserpassword"/>
+                    <v-button v-if="!listeningstatus"/>
+                </form>
+            `
         })
         app.component("v-loggeout",{
-
+            props : {
+                listeningstatus : Boolean
+            }
         })
         app.component("v-button",{
+            data() {
+                return {
+                }
+            },
+            methods : {
+                togglestatus(e) {
+                    console.log('escuchando')
+                    e.preventDefault();
+                }
+            },
+            computed : {
+                handleButton() {
+                    return this.statusLog ? 'Logout' : 'Login'
+                }
+            },
+            inject : ["statusLog"],
             template : `
-                <button></button>
+                <button @click="togglestatus">{{handleButton}}</button>
             `
         })
         const vm = app.mount('#app');
     </script>
+    <style>
+        .container-form{
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 </body>
 </html>

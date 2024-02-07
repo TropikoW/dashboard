@@ -6,10 +6,15 @@
     <title>Registration</title>
 </head>
 <body>
+
+    <!-- MOUNT ID FOR COMPONENTS -->
     <div id="app"></div>
+
+    <!-- IMPORT SCRIPT FOR VUEJS -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
     <script>
-        const app = Vue.createApp({
+        const App = Vue.createApp({
             data() {
                 return {
                     user : {
@@ -38,7 +43,7 @@
                 </div>
             `
         })
-        app.component("v-login",{
+        App.component("v-login",{
             methods : {
                 handlename(e) {
                     this.$emit("update:listeningusername",e.target.value)
@@ -59,7 +64,7 @@
                 </form>
             `
         })
-        app.component("v-logout",{
+        App.component("v-logout",{
             props : {
                 username : String
             },
@@ -67,7 +72,7 @@
                 <p>Hola {{username}}</p>
             `
         })
-        app.component("v-button",{
+        App.component("v-button",{
             methods : {
                 validateInput() {
                     if(this.inputusername.trim() !== '' && this.inputuserpassword.trim() !== '') {
@@ -94,7 +99,7 @@
                 <button @click="validateInput" :class="handlebgbtn">{{handleText}}</button>
             `
         })
-        const vm = app.mount('#app')
+        const vm = App.mount('#app')
     </script>
     <style>
         *{
